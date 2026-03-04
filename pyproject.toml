@@ -1,0 +1,33 @@
+# 패키지 설정 및 의존성 정의
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "choice_claude"
+version = "0.1.0"
+description = "A flexible Claude API/SDK wrapper module"
+authors = [{name = "algocean"}]
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic",
+    "requests",
+    "python-dotenv"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/AlgoceanApiLib/claude-choice-module"
+Repository = "https://github.com/AlgoceanApiLib/claude-choice-module"
+Issues = "https://github.com/AlgoceanApiLib/claude-choice-module/issues"

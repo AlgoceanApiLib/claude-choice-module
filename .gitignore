@@ -1,0 +1,32 @@
+# 환경 변수
+.env
+
+# 가상 환경
+.venv/
+venv/
+env/
+
+# Python 캐시
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Claude Code
+.claude/
+
+# 테스트 파일 (배포 제외)
+Test.py
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
