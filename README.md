@@ -69,7 +69,7 @@ API 키가 필요 없습니다. 대신 아래 조건이 필요합니다:
 
 1. **Claude Code CLI 설치**: `npm install -g @anthropic-ai/claude-code`
 2. **Claude Code 인증 완료**: `claude` 명령어로 로그인된 상태
-3. **Claude 구독 활성화**: Pro 또는 Max 구독
+3. **Claude Max 플랜 사용 권장** (멀티턴 대화 시 요약 호출이 추가되어 토큰 소모 증가)
 
 ---
 
@@ -127,6 +127,25 @@ response = choice_claude.run(
 )
 print(response)
 ```
+
+### 5. SUB 방식 멀티턴 대화
+
+```python
+import choice_claude
+
+chat_history = [
+    {"role": "user", "content": "안녕, 넌 누구니?"},
+    {"role": "assistant", "content": "저는 클로드입니다."},
+    {"role": "user", "content": "너를 만든 곳은?"}
+]
+
+response = choice_claude.run("SUB", "sonnet-4.6", chat_history)
+print(response)
+```
+
+> SUB 멀티턴은 대화 기록을 문자열로 변환하여 전달합니다.
+> 대화가 길어지면(컨텍스트 50% 초과) 이전 대화를 AI가 자동 요약하여 토큰을 절약합니다.
+> 요약 시 sonnet-4.6으로 추가 호출이 발생하므로 **Max 플랜 권장**입니다.
 
 ---
 

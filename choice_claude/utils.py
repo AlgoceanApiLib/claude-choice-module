@@ -35,6 +35,19 @@ def normalize_prompt(prompt_input):
     else:
         raise ValueError(f"❌ 지원하지 않는 프롬프트 형식: {type(prompt_input)}")
 
+# 토큰 수 추정 (한국어/영어 혼합 기준, 약 3자 = 1토큰)
+def estimate_tokens(text: str) -> int:
+    return max(1, len(text) // 3)
+
+# 대화 리스트를 문자열로 변환
+def format_conversation(messages: list) -> str:
+    lines = []
+    for msg in messages:
+        role = msg.get("role", "user")
+        prefix = "User" if role == "user" else "Assistant"
+        lines.append(f"{prefix}: {msg.get('content', '')}")
+    return "\n".join(lines)
+
 # 프롬프트를 단일 문자열로 변환 (SUB 모드용 — Claude CLI는 문자열만 받음)
 def prompt_to_string(prompt_input):
     if isinstance(prompt_input, str):
@@ -42,10 +55,6 @@ def prompt_to_string(prompt_input):
     elif isinstance(prompt_input, dict):
         return prompt_input.get("content", str(prompt_input))
     elif isinstance(prompt_input, list):
-        # 대화 기록에서 마지막 user 메시지 추출
-        for msg in reversed(prompt_input):
-            if msg.get("role") == "user":
-                return msg["content"]
-        return prompt_input[-1].get("content", str(prompt_input[-1]))
+        return format_conversation(prompt_input)
     else:
         raise ValueError(f"❌ 지원하지 않는 프롬프트 형식: {type(prompt_input)}")

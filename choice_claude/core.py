@@ -1,4 +1,4 @@
-from .utils import get_api_key, AVAILABLE_MODELS, normalize_prompt, prompt_to_string
+from .utils import get_api_key, AVAILABLE_MODELS, normalize_prompt, prompt_to_string, estimate_tokens, format_conversation
 
 def help():
     print("\n=== choice_claude 사용 설명서 ===\n")
@@ -114,7 +114,45 @@ def run(Call_rule: str, Model_name: str, prompt, max_tokens: int = 1024):
                 "'npm install -g @anthropic-ai/claude-code'로 설치하고 로그인하세요."
             )
 
-        prompt_str = prompt_to_string(prompt)
+        # 멀티턴 대화 압축 처리
+        CONTEXT_BUDGET = 150_000  # 200k 컨텍스트에서 시스템 프롬프트 오버헤드 제외
+        TOKEN_THRESHOLD = CONTEXT_BUDGET // 2  # 50% 기준
+
+        if isinstance(prompt, list) and len(prompt) > 1:
+            formatted = format_conversation(prompt)
+            token_count = estimate_tokens(formatted)
+
+            if token_count > TOKEN_THRESHOLD:
+                # 마지막 user 메시지 분리
+                current_question = ""
+                for msg in reversed(prompt):
+                    if msg.get("role") == "user":
+                        current_question = msg["content"]
+                        break
+
+                # 이전 대화(마지막 user 제외)를 sonnet-4.6으로 요약
+                history_msgs = prompt[:-1] if prompt[-1].get("role") == "user" else prompt
+                history_str = format_conversation(history_msgs)
+
+                summary_cmd = [
+                    "claude", "-p",
+                    f"다음 대화를 핵심만 3~5줄로 요약해줘:\n{history_str}",
+                    "--model", "claude-sonnet-4-6",
+                    "--output-format", "text"
+                ]
+                summary_result = subprocess.run(
+                    summary_cmd, capture_output=True, text=True, timeout=120
+                )
+                if summary_result.returncode != 0:
+                    raise RuntimeError(f"요약 호출 에러: {summary_result.stderr.strip()}")
+
+                summary = summary_result.stdout.strip()
+                prompt_str = f"[이전 대화 요약]\n{summary}\n\n[현재 질문]\n{current_question}"
+            else:
+                prompt_str = formatted
+        else:
+            prompt_str = prompt_to_string(prompt)
+
         cmd = [
             "claude", "-p", prompt_str,
             "--model", exact_model_name,
