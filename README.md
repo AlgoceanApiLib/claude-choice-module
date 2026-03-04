@@ -73,6 +73,18 @@ API 키가 필요 없습니다. 대신 아래 조건이 필요합니다:
 
 ---
 
+## 함수 목록
+
+| 함수 | 설명 |
+|---|---|
+| `help()` | 전체 사용 설명서 출력 |
+| `help_call()` | 호출 방식 (SDK / API / SUB) 안내 |
+| `help_Model()` | 모델 별칭 목록 출력 |
+| `help_api()` | API 키 발급 방법 안내 |
+| `run(Call_rule, Model_name, prompt, max_tokens=1024)` | Claude 모델 호출 |
+
+---
+
 ## 사용 방법
 
 ### 1. 사용 가능한 옵션 확인
